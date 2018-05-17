@@ -155,6 +155,15 @@ var p1Direction = 0;
 
 
 //enemies
+var blueEnemies = createGroup();
+var enemyFlies = createGroup();
+var shieldEnemies = createGroup();
+var shieldFlies = createGroup();
+var jumpingEnemies = createGroup();
+//var sneakyGuy
+//var behemoth
+//var bountyHunter
+//var ufo
 
 var enemyBlue = createSprite(650, 310);
 enemyBlue.setAnimation("alienBlue_walk_L");
