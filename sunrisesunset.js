@@ -156,6 +156,13 @@ var p1Direction = 0;
 
 //enemies
 var blueEnemies = createGroup();
+for (var i = 0; i < 4; i++) {
+  blueEnemies.add(createSprite(randomNumber(650, 800), 310));
+}
+blueEnemies.setAnimationEach("alienBlue_walk_L");
+blueEnemies.setScaleEach(0.7);
+blueEnemies.setVelocityXEach(-4);
+
 var enemyFlies = createGroup();
 var shieldEnemies = createGroup();
 var shieldFlies = createGroup();
@@ -165,7 +172,7 @@ var jumpingEnemies = createGroup();
 //var bountyHunter
 //var ufo
 
-var enemyBlue = createSprite(650, 310);
+/*var enemyBlue = createSprite(650, 310);
 enemyBlue.setAnimation("alienBlue_walk_L");
 enemyBlue.scale = 0.7;
 enemyBlue.velocityX = -4;
@@ -173,17 +180,17 @@ var enemyBlue2 = createSprite(-500, 310);
 enemyBlue2.setAnimation("alienBlue_walk_R");
 enemyBlue2.scale = 0.7;
 enemyBlue2.velocityX = 4;
-
+*/
 
 var enemySprites = createGroup();//change name of this group
-enemySprites.add(enemyBlue);
-enemySprites.add(enemyBlue2);
+//enemySprites.add(enemyBlue);
+//enemySprites.add(enemyBlue2);
 enemySprites.add(p1);//added p1 to
 enemySprites.add(ship);
 
-var groupBlue = createGroup();
+/*var groupBlue = createGroup();
 groupBlue.add(enemyBlue);
-groupBlue.add(enemyBlue2);
+groupBlue.add(enemyBlue2);*/
 
 //Effects
 var energyBoom = createSprite(200, -200);
@@ -207,6 +214,7 @@ var lose = 0;
 function draw() {//*******************************************DRAW LOOP
 
   player();
+  laserStuff();
   enemies();
   background(rgb( sky.r, sky.g, sky.b ));
   skyColor();
@@ -248,11 +256,11 @@ function player (){//Movement and player weaponry
   //Player Movement
   if(keyDown("a")){//Left
     p1.setAnimation("alienPink_walk_L");
-    p1.x -=5;
+    p1.velocityX = -5;
     p1Direction = 0;
   }else if(keyDown("d")){//Right
     p1.setAnimation("alienPink_walk_R");
-    p1.x +=5;
+    p1.velocityX = 5;
     p1Direction = 1;
   }else if(keyWentUp("a")){
     p1.setAnimation("alienPink_stand_L");
@@ -266,51 +274,9 @@ function player (){//Movement and player weaponry
     p1.setAnimation("alienPink_stand_L");
   }else if(keyWentUp("s") && p1Direction === 1){
     p1.setAnimation("alienPink_stand_R");
-  }
-  
-  //Mouse Laser Stuff
-  if(mouseDown("leftButton")){//Laser was mouseClicked?
-    mouseClicked = 1;
-    
-    //lineBeam.visible = true;
-    lineBeam.pointTo(mX, World.mouseY);
-    lineBeam.x = p1.x;
-    lineBeam.y = p1.y;
-    
   }else{
-    mouseClicked = 0;
-    lineBeam.visible = false;
-    
+    p1.velocityX = 0;
   }
-  
-  
-  //MainMouse 
-  if(mouseWentDown("leftButton")){
-    laser.setAnimation("laser");
-    laser.visible = true;
-    laser.setVelocity(((mX - p1.x)/2.5), ((World.mouseY - p1.y)/2.5));
-  }
-  //if(mouseWentDown("leftButton") && )
-
-  //Respawn Laser
-  if(laser.x < camera.x - 250 || laser.x > camera.x + 250 || laser.y < -50 || laser.y > 345){
-    laser.visible = false;
-    laser.setVelocity(0,0);
-  }
-  if(laser.visible === false){
-    laser.x = p1.x;
-    laser.y = p1.y;
-  }
-
-  //Laser Sounds
-  if(mouseDown("leftButton")){
-    if(laser.velocityX > 15 || laser.velocityX < -15 || laser.velocityY > 15 || laser.velocityY < -15){
-      playSound("Fast Laser.mp3",false);
-    }else if (laser.velocityX < 15 || laser.velocityX > -15 || laser.velocityY < 15 || laser.velocityY > -15){
-      playSound("Laser Redirect.mp3");
-    }
-  }
-  
   
   //Jump
   if(keyWentDown("w") && p1.y >= 280){
@@ -330,6 +296,58 @@ function player (){//Movement and player weaponry
     //p1.setAnimation("alienPink_1");
   }
   
+}
+
+function laserStuff(){
+  //Mouse Laser Stuff
+  if(mouseDown("leftButton")){//Laser was mouseClicked?
+    mouseClicked = 1;
+    
+    //lineBeam.visible = true;
+    lineBeam.pointTo(mX, World.mouseY);
+    lineBeam.x = p1.x;
+    lineBeam.y = p1.y;
+    
+  }else{
+    mouseClicked = 0;
+    lineBeam.visible = false;
+    
+  }
+
+
+  //MainMouse 
+  if(mouseWentDown("leftButton")){
+    laser.setAnimation("laser");
+    laser.visible = true;
+    laser.setVelocity(((mX - p1.x)/2.5), ((World.mouseY - p1.y)/2.5));
+  }
+  //if(mouseWentDown("leftButton") && )
+
+  //Respawn Laser
+  if(laser.x < camera.x - 250 || laser.x > camera.x + 250 || laser.y < -50 || laser.y > 345){
+
+    laserRespawn();
+    /*laser.visible = false;
+    laser.setVelocity(0,0);*/
+  }
+  if(laser.visible === false){
+    laser.x = p1.x;
+    laser.y = p1.y;
+  }
+
+  //Laser Sounds
+  if(mouseDown("leftButton")){
+    if(laser.velocityX > 15 || laser.velocityX < -15 || laser.velocityY > 15 || laser.velocityY < -15){
+      playSound("Fast Laser.mp3",false);
+    }else if (laser.velocityX < 15 || laser.velocityX > -15 || laser.velocityY < 15 || laser.velocityY > -15){
+      playSound("Laser Redirect.mp3");
+    }
+  }
+}
+
+function laserRespawn(){
+  laser.visible = false;
+  laser.setVelocity(0,0);
 }
 
 function laserPointer(){
@@ -373,19 +391,31 @@ function enemyOrder(){
 }
 
 function enemies(){
-  
-  //enemyBlue
-  if (enemyBlue.isTouching(laser) && laser.visible === true){
-    boom();
-    enemyBlue.x = 700;
-    enemyBlue.velocityX = randomNumber(-2, -7);
-    enemyBlue.setAnimation("alienBlue_walk_L");
-    
-  
-    laser.visible = false;    // These were copied from the laser respawn code FYI :(
-    laser.setVelocity(0,0);   //
-    
+
+  //blueEnemies
+  for (var i = 0; i < 4; i++) {
+    var temp = blueEnemies.get(i);
+
+    if (temp.isTouching(laser) && laser.visible ===true){
+      energyBoom = createSprite(temp.x, temp.y);
+        energyBoom.setAnimation("energy_boom");
+        energyBoom.scale = 0.7;
+        energyBoom.lifetime = 19;
+        playSound("sound://category_digital/laser_fade_4.mp3");
+      temp.x = randomNumber(650, 800);
+      temp.velocityX -= Math.random();
+      temp.velocityX = randomNumber(-1, -4);
+      laserRespawn();
+      
+    }
+    if (temp.isTouching(ship)){
+      temp.setVelocity(0, 0);
+      temp.setAnimation("alienBlue_jump_L");
+      shipHealth = shipHealth - 2;
+    }
   }
+  
+  /*
   if (enemyBlue2.isTouching(laser) && laser.visible === true){
        boomTwo();
        enemyBlue2.x = -600;
@@ -398,21 +428,16 @@ function enemies(){
   if (enemyBlue.isTouching(ship)){
     enemyBlue.setVelocity(0, 0);
     enemyBlue.setAnimation("alienBlue_jump_L");
-    shipHealth = shipHealth - 4;
+    shipHealth = shipHealth - 2;
     
   }
   if (enemyBlue2.isTouching(ship)){
     enemyBlue2.setVelocity(0, 0);
     enemyBlue2.setAnimation("alienBlue_jump_R");
-    shipHealth = shipHealth - 4;
+    shipHealth = shipHealth - 2;
     
-  }
-  //groupBlue
-  if (groupBlue.isTouching(laser) && laser.visible === true){
-
-    
-  }
-
+  }*/
+  
 }
 
 //User Interface
@@ -444,7 +469,7 @@ function playerHealth(){
   //playerHealth Meter
   p1HealthAnimation.x = camera.x - 130;
   
-  if (enemyBlue.collide(p1) && p1Health > -1 ) {
+  if (p1.bounceOff(blueEnemies) && p1Health > -1 ) {
     p1Health -= 1;
     //pig += 1;
     
@@ -462,12 +487,12 @@ function shipDeath(){
   if(shipHealth <= 0){
     boomThree();
     ship.y = 100000;
-    enemyBlue2.x = -600;
+    /*enemyBlue2.x = -600;
     enemyBlue2.velocityX = randomNumber(2,7);
     enemyBlue2.setAnimation("alienBlue_walk_R");
     enemyBlue.x = 700;
     enemyBlue.velocityX = randomNumber(-2, -7);
-    enemyBlue.setAnimation("alienBlue_walk_L");
+    enemyBlue.setAnimation("alienBlue_walk_L");*/
     lose = 1;
     p1.destroy();
     p1Shield.destroy();
